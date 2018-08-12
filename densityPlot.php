@@ -48,6 +48,10 @@
       //exec('/usr/local/bin/python2.7 sliceArray.py');
       exec('/Users/tgh/anaconda2/bin/python density.py');
         //'python foo.py' . json_encode($associativeArray)
+	foreach($out as $key => $value)
+	{
+		echo $key." ".$value."<br>";
+	}
     ?>
     <img src="density.png" alt="Trulli" width="800" height="800">
 </div?

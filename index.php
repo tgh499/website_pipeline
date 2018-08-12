@@ -154,6 +154,10 @@
       //$output = passthru('python sliceArray.py');
       //exec('/usr/local/bin/python2.7 sliceArray.py');
       exec('/Users/tgh/anaconda2/bin/python sliceArray.py');
+      foreach($out as $key => $value)
+      {
+        echo $key." ".$value."<br>";
+      }
       $str = file_get_contents('./data.json');
       $json = json_decode($str, true);
         //'python foo.py' . json_encode($associativeArray)
@@ -284,6 +288,6 @@
 
   <?php include 'sampleTable.php';?>
   <?php include 'densityPlot.php'?>
-
+  <a href="boxplot.php">Visit our HTML tutorial</a>
   </body>
 </html>
