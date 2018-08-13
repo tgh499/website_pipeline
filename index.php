@@ -154,133 +154,16 @@
       //$output = passthru('python sliceArray.py');
       //exec('/usr/local/bin/python2.7 sliceArray.py');
       exec('/Users/tgh/anaconda2/bin/python sliceArray.py');
+      
+
       foreach($out as $key => $value)
       {
         echo $key." ".$value."<br>";
       }
-      $str = file_get_contents('./data.json');
-      $json = json_decode($str, true);
         //'python foo.py' . json_encode($associativeArray)
-
-
-
     ?>
-    <!-- chart.js plot
-    <canvas id="scatterPlot" width=50%></canvas>
-    <script>
-
-      // get the numbers from div element
-      
-      /*  
-      var gene0_data = <?php echo json_encode($gene0_data);?>;
-      var gene1_data = <?php echo json_encode($gene1_data);?>;
-      var scatterPoints = [];
-      
-      for (var i = 0; i < gene0_data.length; i++) {
-        var temp = {};
-        temp['x'] = gene0_data[i];
-        temp['y'] = gene1_data[i];
-        scatterPoints.push(temp);
-      }
-      */
-
-      var scatterPoints = <?php echo json_encode($json);?>;
-      console.log(scatterPoints);
-
-      var ctx = document.getElementById("scatterPlot").getContext('2d');
-      var scatterChart = new Chart(ctx, {
-          type: 'scatter',
-          data: {
-              datasets: [{
-                  label: 'Scatter Dataset',
-                  borderColor: "green",
-                  data: scatterPoints
-              }]
-          },
-          options: {
-              scales: {
-                  xAxes: [{
-                      type: 'logarithmic',
-                      position: 'bottom'
-                  }]
-              }
-          }
-      });
-    </script>
-  -->
   </div>
-<!-- D3 plot
-  <div class="container">
-    <script type="text/javascript">
-      var gene0_data = <?php echo json_encode($gene0_data);?>;
-      var gene1_data = <?php echo json_encode($gene1_data);?>;
-      var data = [];
-      
-      for (var i = 0; i < gene0_data.length; i++) {
-        var temp = [];
-        temp.push(gene0_data[i]);
-        temp.push(gene1_data[i]);
-        data.push(temp);
-      }
 
-      console.log(data[0]);
-      //var data = [[5,3], [10,17], [15,4], [2,8]];
-         
-          var margin = {top: 20, right: 15, bottom: 60, left: 60}
-            , width = 960 - margin.left - margin.right
-            , height = 960 - margin.top - margin.bottom;
-          
-          var x = d3.scale.linear()
-                    .domain([0, d3.max(data, function(d) { return d[0]; })])
-                    .range([ 0, width ]);
-          
-          var y = d3.scale.linear()
-                  .domain([0, d3.max(data, function(d) { return d[1]; })])
-                  .range([ height, 0 ]);
-       
-          var chart = d3.select('body')
-        .append('svg:svg')
-        .attr('width', width + margin.right + margin.left)
-        .attr('height', height + margin.top + margin.bottom)
-        .attr('class', 'chart')
-
-          var main = chart.append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-        .attr('width', width)
-        .attr('height', height)
-        .attr('class', 'main')   
-              
-          // draw the x axis
-          var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient('bottom');
-
-          main.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .attr('class', 'main axis date')
-        .call(xAxis);
-
-          // draw the y axis
-          var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient('left');
-
-          main.append('g')
-        .attr('transform', 'translate(0,0)')
-        .attr('class', 'main axis date')
-        .call(yAxis);
-
-          var g = main.append("svg:g"); 
-          
-          g.selectAll("scatter-dots")
-            .data(data)
-            .enter().append("svg:circle")
-                .attr("cx", function (d,i) { return x(d[0]); } )
-                .attr("cy", function (d) { return y(d[1]); } )
-                .attr("r", 1);
-    </script>
-  </div>
--->
   <div class="container">
     <img src="scatter.png" width="800" height="800">
     
@@ -288,6 +171,72 @@
 
   <?php include 'sampleTable.php';?>
   <?php include 'densityPlot.php'?>
-  <a href="boxplot.php">Visit our HTML tutorial</a>
+  <?php 
+      exec('./hello.R');
+        foreach($out as $key => $value)
+      {
+        echo $key." ".$value."<br>";
+      }
+  ?>
+  <div class="container">
+    <p>Select Database. Examples for parameter 1: diagnosisAge, lymph_nodes, patientsWeight; Examples for parameter 2: gender, priorCancerOccurence, race.</p>
+      <form method="post">
+        Database Name: <input type="text" name="databaseName">
+      <br><br>
+      Choose Parameter: <input type="text" name="param0">
+      Choose Parameter:  <input type="text" name="param1">
+      <!--Number of data points: <input type="text" name="dtpts"> -->
+      <input type="submit">
+    </form>
+    <?php 
+      $param0 = $_POST["param0"];
+      $param1 = $_POST["param1"];
+  
+      require 'connect.inc.php';
+      $param0_data = $param1_data = array();
+      $query0 = "SELECT $param0 FROM tcga";
+      $query1 = "SELECT $param1 FROM tcga";
+      if ($query_run = $mysqli->query($query0)){
+        while ($query_row = $query_run->fetch_assoc()) {
+            $param0_data[] = $query_row[$param0];
+        }
+      }
+      if ($query_run = $mysqli->query($query1)){
+        while ($query_row = $query_run->fetch_assoc()) {
+            $param1_data[] = $query_row[$param1];
+        }
+      } else {
+        echo "<br><b>The gene names are not correct. Check your input.</b><br>";
+      }
+      //file_put_contents('gene0.txt', print_r(array_values;
+
+      $file0 = fopen("param0.csv","w");
+      $file1 = fopen("param1.csv","w");
+
+      foreach ($param0_data as $line)
+        {
+        fputcsv($file0,explode(',',$line));
+        }
+
+      fclose($file0); 
+
+      foreach ($param1_data as $line)
+        {
+        fputcsv($file1,explode(',',$line));
+        }
+
+      fclose($file1); 
+      exec('/usr/local/bin/Rscript hello.R');
+      foreach($out as $key => $value)
+      {
+        echo $key." ".$value."<br>";
+      }
+
+    ?>
+    <img src="boxplot.png" width="800" height="800">
+    
+  </div>
+  </div>
+
   </body>
 </html>
