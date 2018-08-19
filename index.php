@@ -1,6 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <?php header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); header('Cache-Control: no-store, no-cache, must-revalidate'); header('Cache-Control: post-check=0, pre-check=0', FALSE); header('Pragma: no-cache'); ?>
+    <style>
+      .navbar {
+      overflow: hidden;
+      background-color: #333;
+      font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .navbar a {
+      float: left;
+      font-size: 16px;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      }
+
+      .dropdown {
+      float: left;
+      overflow: hidden;
+      }
+
+      .dropdown .dropbtn {
+      font-size: 16px;    
+      border: none;
+      outline: none;
+      color: white;
+      padding: 14px 16px;
+      background-color: inherit;
+      font-family: inherit;
+      margin: 0;
+      }
+
+      .navbar a:hover, .dropdown:hover .dropbtn {
+      background-color: red;
+      }
+
+      .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      }
+
+      .dropdown-content a {
+      float: none;
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+      }
+
+      .dropdown-content a:hover {
+      background-color: #ddd;
+      }
+
+      .dropdown:hover .dropdown-content {
+      display: block;
+      }
+    </style>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,203 +103,50 @@
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
   </head>
   <body>
-    <div class="col-xs-12" style="height:50px;"></div>
-      <div class="container" id="DIV1">
-        <input type="text" id="searchInput" onkeyup="myFunction()" placeholder="Search for genes.." title="Type in a gene name">
-        <table class="table" id="myTable">
-          <tr class="header">
-            <th style="width:60%"">Sample_series_id</th>
-            <th style="width:60%">Sample_source_name_ch1</th>
-            <th style="width:60%">gene_entrezid</th>
-          </tr>
-          <?php
-            require 'connect.inc.php';
-            $query = "SELECT Sample_series_id,Sample_source_name_ch1,gene_entrezid FROM newSamples";
-            $sample_series_id = $sample_channel = $gene_entrezid = array();
-            if ($query_run = $mysqli->query($query)){
-              while ($query_row = $query_run->fetch_assoc()) {
-                  echo "<tr>";
-                  echo "<td>";
-                  // storing the values of query to pass onto JavaScript later
-                  $gene_entrezid[] =  $query_row['gene_entrezid'];
-                  echo $query_row["Sample_series_id"];
-                  echo "</td>";
-                  echo "<td>";
-                  $sample_channel[] = $query_row['Sample_source_name_ch1'];
-                  echo $query_row["Sample_source_name_ch1"];
-                  echo "</td>";
-                  echo "<td>";
-                  $Sample_series_id[] = $query_row['Sample_series_id'];
-                  echo $query_row["gene_entrezid"];
-                  echo "</td>";
-                  echo "</tr>";
-              }
-            } else {
-              echo "Query FAILED!";
-            }
-            $mysqli->close();
-            //print_r(array_values($gene_entrezid));
-          ?>
-        </table>
-        <!--table SEARCH function-->
-        <script>
-          function myFunction() {
-            var input, filter, table, tr, td, i;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("myTable");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-            // change COLUMN by selecting 0,1 etc.
-              td = tr[i].getElementsByTagName("td")[1];
-              if (td) {
-                console.log(td.outerHTML)
-                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-              }       
-            }
-
-          }
-        </script>
-      </div>
-    </div>
-
-  <div class="container">
-    <p>Enter two sample names for which you want to see scatter plot. For example: GSM1113310 and GSM1171525. More example data: GSM1171527, GSM937160, GSM1113308, GSM1113301, GSM1113307, GSM1113302</p>
-    <form method="post">
-      Sample1: <input type="text" name="gene0">
-      Sample2: <input type="text" name="gene1">
-      <!--Number of data points: <input type="text" name="dtpts"> -->
-      <input type="submit">
-    </form>
-    <?php 
-      $gene0 = $_POST["gene0"];
-      $gene1 = $_POST["gene1"];
-      $dtpts = $_POST["dtpts"];
-      $gene0_data = $gene1_data = array();
-      require 'connect.inc.php';
-      $query0 = "SELECT $gene0 FROM brstCncr_data";
-      $query1 = "SELECT $gene1 FROM brstCncr_data";
-      if ($query_run = $mysqli->query($query0)){
-        while ($query_row = $query_run->fetch_assoc()) {
-            $gene0_data[] = $query_row[$gene0];
-        }
-      }
-      if ($query_run = $mysqli->query($query1)){
-        while ($query_row = $query_run->fetch_assoc()) {
-            $gene1_data[] = $query_row[$gene1];
-        }
-      } else {
-        echo "<br><b>The gene names are not correct. Check your input.</b><br>";
-      }
-      //file_put_contents('gene0.txt', print_r(array_values;
-
-      $file0 = fopen("gene0.csv","w");
-      $file1 = fopen("gene1.csv","w");
-
-      foreach ($gene0_data as $line)
-        {
-        fputcsv($file0,explode(',',$line));
-        }
-
-      fclose($file0); 
-
-      foreach ($gene1_data as $line)
-        {
-        fputcsv($file1,explode(',',$line));
-        }
-
-      fclose($file1); 
-
-      //$output = passthru('python sliceArray.py');
-      //exec('/usr/local/bin/python2.7 sliceArray.py');
-      exec('/Users/tgh/anaconda2/bin/python sliceArray.py');
-      
-
-      foreach($out as $key => $value)
-      {
-        echo $key." ".$value."<br>";
-      }
-        //'python foo.py' . json_encode($associativeArray)
-    ?>
-  </div>
-
-  <div class="container">
-    <img src="scatter.png" width="800" height="800">
-    
-  </div>
-
+  <?php include 'table.php'?>
+  <?php include 'scatter.php'?>
   <?php include 'sampleTable.php';?>
   <?php include 'densityPlot.php'?>
-  <?php 
-      exec('./hello.R');
-        foreach($out as $key => $value)
-      {
-        echo $key." ".$value."<br>";
-      }
-  ?>
-  <div class="container">
-    <p>Select Database. Examples for parameter 1: diagnosisAge, lymph_nodes, patientsWeight; Examples for parameter 2: gender, priorCancerOccurence, race.</p>
-      <form method="post">
-        Database Name: <input type="text" name="databaseName">
-      <br><br>
-      Choose Parameter: <input type="text" name="param0">
-      Choose Parameter:  <input type="text" name="param1">
-      <!--Number of data points: <input type="text" name="dtpts"> -->
-      <input type="submit">
-    </form>
-    <?php 
-      $param0 = $_POST["param0"];
-      $param1 = $_POST["param1"];
-  
-      require 'connect.inc.php';
-      $param0_data = $param1_data = array();
-      $query0 = "SELECT $param0 FROM tcga";
-      $query1 = "SELECT $param1 FROM tcga";
-      if ($query_run = $mysqli->query($query0)){
-        while ($query_row = $query_run->fetch_assoc()) {
-            $param0_data[] = $query_row[$param0];
-        }
-      }
-      if ($query_run = $mysqli->query($query1)){
-        while ($query_row = $query_run->fetch_assoc()) {
-            $param1_data[] = $query_row[$param1];
-        }
-      } else {
-        echo "<br><b>The gene names are not correct. Check your input.</b><br>";
-      }
-      //file_put_contents('gene0.txt', print_r(array_values;
+  <?php include 'boxplot.php'?>
+<p>In this example, we use JavaScript to "click" on the London button, to open the tab on page load.</p>
 
-      $file0 = fopen("param0.csv","w");
-      $file1 = fopen("param1.csv","w");
-
-      foreach ($param0_data as $line)
-        {
-        fputcsv($file0,explode(',',$line));
-        }
-
-      fclose($file0); 
-
-      foreach ($param1_data as $line)
-        {
-        fputcsv($file1,explode(',',$line));
-        }
-
-      fclose($file1); 
-      exec('/usr/local/bin/Rscript hello.R');
-      foreach($out as $key => $value)
-      {
-        echo $key." ".$value."<br>";
-      }
-
-    ?>
-    <img src="boxplot.png" width="800" height="800">
-    
-  </div>
+  <div class="tab">
+    <button class="tablinks" onclick="openCity(event, 'London')" id="defaultOpen">London</button>
+    <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
+    <button class="tablinks" onclick="openCity(event, 'Tokyo')">Tokyo</button>
   </div>
 
+  <div id="London" class="tabcontent">
+    <h3>London</h3>
+    <p>London is the capital city of England.</p>
+  </div>
+
+  <div id="Paris" class="tabcontent">
+    <h3>Paris</h3>
+    <p>Paris is the capital of France.</p> 
+  </div>
+
+  <div id="Tokyo" class="tabcontent">
+    <h3>Tokyo</h3>
+    <p>Tokyo is the capital of Japan.</p>
+  </div>
+  <script>
+  function openCity(evt, cityName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(cityName).style.display = "block";
+      evt.currentTarget.className += " active";
+  }
+
+  // Get the element with id="defaultOpen" and click on it
+  document.getElementById("defaultOpen").click();
+  </script>
   </body>
 </html>
