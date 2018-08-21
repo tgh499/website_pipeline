@@ -18,6 +18,9 @@ survivalAnalysisOrig <- function(geneID, datasetID, cutoff){
   LCDBServer <- lcdb.server(SOAP_SERVER, port=SOAP_SERVER_PORT)
   
   #Right now just take any probe listed from any authority. Eventually, we'll probably want to use consensus or just BLAST
+  
+  ##### COLLECT ROW NUMBERS????
+
   vals <- lcdb.getValues(LCDBServer, DatasetID = datasetID, EntrezID = geneID, PMServer = PMServer)
   if (nrow(vals) == 0 || all(is.na(vals))){
     stop("No data found for this gene in this dataset.")
@@ -26,9 +29,13 @@ survivalAnalysisOrig <- function(geneID, datasetID, cutoff){
   #chomp the prefixed character off of the column names
   valNames <- substr(names(vals), 2, nchar(names(vals)))
   
+  ##### GET SAMPLES FROM DATABASE
+  ### I CAN START FROM HERE
   samples <- lcdb.getSamples(LCDBServer, SampleID=valNames)
   samples <- samples[as.integer(samples$Tissue)==1,]
   
+
+  ### DELETE UNNECESSARY SAMPLES
   #only keep those samples which have NormID=2
   valsToKeep <- which(valNames%in%samples$ID)
   valNames <- valNames[valsToKeep]

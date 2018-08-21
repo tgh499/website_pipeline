@@ -1,67 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <?php header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); header('Cache-Control: no-store, no-cache, must-revalidate'); header('Cache-Control: post-check=0, pre-check=0', FALSE); header('Pragma: no-cache'); ?>
     <style>
-      .navbar {
-      overflow: hidden;
-      background-color: #333;
-      font-family: Arial, Helvetica, sans-serif;
+      body {font-family: Arial;}
+
+      /* Style the tab */
+      .tab {
+          overflow: hidden;
+          border: 1px solid #ccc;
+          background-color: #f1f1f1;
       }
 
-      .navbar a {
-      float: left;
-      font-size: 16px;
-      color: white;
-      text-align: center;
-      padding: 14px 16px;
-      text-decoration: none;
+      /* Style the buttons inside the tab */
+      .tab button {
+          background-color: inherit;
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 14px 16px;
+          transition: 0.3s;
+          font-size: 17px;
       }
 
-      .dropdown {
-      float: left;
-      overflow: hidden;
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+          background-color: #ddd;
       }
 
-      .dropdown .dropbtn {
-      font-size: 16px;    
-      border: none;
-      outline: none;
-      color: white;
-      padding: 14px 16px;
-      background-color: inherit;
-      font-family: inherit;
-      margin: 0;
+      /* Create an active/current tablink class */
+      .tab button.active {
+          background-color: #ccc;
       }
 
-      .navbar a:hover, .dropdown:hover .dropbtn {
-      background-color: red;
-      }
-
-      .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: #f9f9f9;
-      min-width: 160px;
-      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-      z-index: 1;
-      }
-
-      .dropdown-content a {
-      float: none;
-      color: black;
-      padding: 12px 16px;
-      text-decoration: none;
-      display: block;
-      text-align: left;
-      }
-
-      .dropdown-content a:hover {
-      background-color: #ddd;
-      }
-
-      .dropdown:hover .dropdown-content {
-      display: block;
+      /* Style the tab content */
+      .tabcontent {
+          display: none;
+          padding: 6px 12px;
+          border: 1px solid #ccc;
+          border-top: none;
       }
     </style>
     <meta charset="utf-8">
@@ -98,55 +75,63 @@
     circle {
         fill: steelblue;
     }
-
     </style>
-    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
   </head>
   <body>
-  <?php include 'table.php'?>
-  <?php include 'scatter.php'?>
-  <?php include 'sampleTable.php';?>
-  <?php include 'densityPlot.php'?>
-  <?php include 'boxplot.php'?>
-<p>In this example, we use JavaScript to "click" on the London button, to open the tab on page load.</p>
 
-  <div class="tab">
-    <button class="tablinks" onclick="openCity(event, 'London')" id="defaultOpen">London</button>
-    <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
-    <button class="tablinks" onclick="openCity(event, 'Tokyo')">Tokyo</button>
-  </div>
+    <div class="container">
+      <p>Click on tabs to perform intended action.</p>
+      <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'Table')" id="defaultOpen">Sample Table</button>
+        <button class="tablinks" onclick="openTab(event, 'SampleAnnot')">Sample Annotation</button>
+        <button class="tablinks" onclick="openTab(event, 'ScatterPlot')">ScatterPlot</button>
+        <button class="tablinks" onclick="openTab(event, 'DensityPlot')">DensityPlot</button>
+        <button class="tablinks" onclick="openTab(event, 'Box')">Box Plot</button>
+        <button class="tablinks" onclick="openTab(event, 'Surv')">Survival Analysis</button>
+      </div>
+      <div id="Table" class="tabcontent">
+        <h3>Sample Table</h3>
+        <?php include 'table.php'?>
+      </div>
 
-  <div id="London" class="tabcontent">
-    <h3>London</h3>
-    <p>London is the capital city of England.</p>
-  </div>
+      <div id="Box" class="tabcontent">
+        <?php include 'box.php'?> 
+      </div>  
 
-  <div id="Paris" class="tabcontent">
-    <h3>Paris</h3>
-    <p>Paris is the capital of France.</p> 
-  </div>
+      <div id="Surv" class="tabcontent">
+        <?php include 'surv.php'?> 
+      </div>
 
-  <div id="Tokyo" class="tabcontent">
-    <h3>Tokyo</h3>
-    <p>Tokyo is the capital of Japan.</p>
-  </div>
-  <script>
-  function openCity(evt, cityName) {
-      var i, tabcontent, tablinks;
-      tabcontent = document.getElementsByClassName("tabcontent");
-      for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
+      <div id="SampleAnnot" class="tabcontent">
+        <?php include 'sampleTable.php';?>
+      </div>
+
+      <div id="ScatterPlot" class="tabcontent">
+        <?php include 'scatter.php'?>
+      </div>
+
+      <div id="DensityPlot" class="tabcontent">
+        <?php include 'densityPlot.php'?> 
+      </div>
+
+
+    </div>
+    <script>
+      function openTab(evt, cityName) {
+          var i, tabcontent, tablinks;
+          tabcontent = document.getElementsByClassName("tabcontent");
+          for (i = 0; i < tabcontent.length; i++) {
+              tabcontent[i].style.display = "none";
+          }
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < tablinks.length; i++) {
+              tablinks[i].className = tablinks[i].className.replace(" active", "");
+          }
+          document.getElementById(cityName).style.display = "block";
+          evt.currentTarget.className += " active";
       }
-      tablinks = document.getElementsByClassName("tablinks");
-      for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-      }
-      document.getElementById(cityName).style.display = "block";
-      evt.currentTarget.className += " active";
-  }
-
-  // Get the element with id="defaultOpen" and click on it
-  document.getElementById("defaultOpen").click();
-  </script>
+      // Get the element with id="defaultOpen" and click on it
+      document.getElementById("defaultOpen").click();
+    </script>
   </body>
 </html>

@@ -1,4 +1,5 @@
   <div class="container">
+    <h3>Scatter Plot</h3>
     <p>Enter two sample names for which you want to see scatter plot. For example: GSM1113310 and GSM1171525. More example data: GSM1171527, GSM937160, GSM1113308, GSM1113301, GSM1113307, GSM1113302</p>
     <form method="post">
       Sample1: <input type="text" name="gene0">
