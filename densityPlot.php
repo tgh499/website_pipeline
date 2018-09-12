@@ -54,5 +54,5 @@
   		echo $key." ".$value."<br>";
   	}
   ?>
-  <img src="density.png?rand=<?php echo rand(); ?>" alt="Trulli" width="800" height="800">
+  <img src="density.png?rand=<?php echo rand(); ?>" alt="Trulli">
 </div?

@@ -76,5 +76,5 @@
       echo $key." ".$value."<br>";
     }
   ?>
-  <img src="surv.png?rand=<?php echo rand(); ?>" width="800" height="800">
+  <img src="surv.png?rand=<?php echo rand(); ?>">
 </div>

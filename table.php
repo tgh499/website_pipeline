@@ -3,7 +3,7 @@
         <input type="text" id="searchInput" onkeyup="myFunction()" placeholder="Search for genes.." title="Type in a gene name">
         <table class="table" id="myTable">
           <tr class="header">
-            <th style="width:60%"">Sample_series_id</th>
+            <th style="width:60%">Sample_series_id</th>
             <th style="width:60%">Sample_source_name_ch1</th>
             <th style="width:60%">gene_entrezid</th>
           </tr>

@@ -53,5 +53,5 @@
         echo $key." ".$value."<br>";
       }
     ?>
-    <img src="scatter.png?rand=<?php echo rand(); ?>" width="800" height="800">
+    <img src="scatter.png?rand=<?php echo rand(); ?>">
   </div>

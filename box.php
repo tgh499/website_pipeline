@@ -12,6 +12,9 @@
     <?php 
       $param0 = $_POST["param0"];
       $param1 = $_POST["param1"];
+
+      file_put_contents('param0.txt', $param0);
+      file_put_contents('param1.txt', $param1);
   
       require 'connect.inc.php';
       $param0_data = $param1_data = array();
@@ -52,5 +55,5 @@
         echo $key." ".$value."<br>";
       }
     ?>
-    <img src="boxplot.png?rand=<?php echo rand(); ?>" width="800" height="800">
+    <img src="boxplot.png?rand=<?php echo rand(); ?>">
   </div>
